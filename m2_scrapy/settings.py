@@ -18,12 +18,10 @@ NEWSPIDER_MODULE = 'upc_scrapy.spiders'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'upc_scrapy (+http://www.yourdomain.com)'
 # Use google's user agent
-USER_AGENT = 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-# scrapy_proxy_pool
-# PROXY_POOL_ENABLED = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -58,21 +56,44 @@ ROBOTSTXT_OBEY = True
 #     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 #     'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
 # }
-DOWNLOADER_MIDDLEWARES = {'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None}
+# DOWNLOADER_MIDDLEWARES = {'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None}
+
+# DOWNLOADER_MIDDLEWARES = {
+#     # USER_AGENTS
+#     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+#     'scrapy_useragents.downloadermiddlewares.useragents.UserAgentsMiddleware': 500,
+
+
+
+# Retry many times since proxies often fail
+RETRY_ENABLED = True
+RETRY_TIMES = 20
+# # Retry on most error codes since proxies fail for different reasons
+RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
+HTTPERROR_ALLOWED_CODES = [503]
+
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_useragents.downloadermiddlewares.useragents.UserAgentsMiddleware': 500,
+    # 'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 90,
+    #
+    # 'scrapy_proxies.RandomProxy': 100,
+    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    'upc_scrapy.middlewares.UpcScrapyDownloaderMiddleware':400,
+}
+# PROXY_LIST = '/Users/lijiahuan/PycharmProjects/Medicinal_Foods/upc_scrapy/upc_scrapy/proxy_list.txt'
+# PROXY_MODE = 0
+
+
+# If proxy mode is 2 uncomment this sentence :
+# CUSTOM_PROXY = "http://host1:port"
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
 #    'upc_scrapy.middlewares.UpcScrapyDownloaderMiddleware': 543,
 #}
-
-# scrapy_proxy_pool
-# DOWNLOADER_MIDDLEWARES = {
-#     # ...
-#     'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
-#     'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
-#     # ...
-# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
